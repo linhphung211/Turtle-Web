@@ -37,7 +37,7 @@ export default function ProfilePage() {
   const { user, setUser } = useAuth();
   const navigate = useNavigate();
 
-  const [activeTab, setActiveTab] = useState('info'); 
+  const [activeTab, setActiveTab] = useState('info');
   const [showPassword, setShowPassword] = useState(false);
 
   // States cho Upload & Crop Avatar
@@ -75,7 +75,7 @@ export default function ProfilePage() {
   // --- HÀM DỊCH LỖI SANG TIẾNG VIỆT ---
   const translateError = (errorMsg) => {
     if (!errorMsg || typeof errorMsg !== 'string') return errorMsg;
-    
+
     const dictionary = {
       'Enter a valid email address.': 'Email không đúng định dạng rồi bạn ơi! 🐢',
       'This field may not be blank.': 'Ô này không được để trống nhé! ✨',
@@ -84,7 +84,7 @@ export default function ProfilePage() {
       'Enter a valid phone number.': 'Số điện thoại chưa đúng rồi! 📞',
       'Old password is not correct': 'Mật khẩu cũ không chính xác! ❌',
       'This field may not be null.': 'Thông tin này không được bỏ trống nhé!',
-      'user with this username already exists.': 'Tên đăng nhập này đã có người dùng rồi!',
+      'A user with that username already exists.': 'Tên đăng nhập này đã có người dùng rồi!',
     };
 
     for (const [key, value] of Object.entries(dictionary)) {
@@ -96,7 +96,7 @@ export default function ProfilePage() {
   const getErrorText = (errorData, defaultText) => {
     if (!errorData) return defaultText;
     if (typeof errorData === 'string') return translateError(errorData);
-    
+
     const firstError = Object.values(errorData)[0];
     const msg = Array.isArray(firstError) ? firstError[0] : firstError;
     return translateError(msg);
@@ -190,7 +190,7 @@ export default function ProfilePage() {
   const getAvatarUrl = () => {
     if (!user?.avatar) return null;
     if (user.avatar.startsWith('http')) return user.avatar;
-    return `http://127.0.0.1:8000${user.avatar}`; 
+    return `http://127.0.0.1:8000${user.avatar}`;
   };
 
   return (
@@ -256,15 +256,15 @@ export default function ProfilePage() {
               </label>
               <input id="avatar-upload" type="file" accept="image/*" className="hidden" onChange={onFileChange} />
             </div>
-            
+
             <div className="text-center w-full">
               <h2 className="font-black text-lg uppercase truncate">{user?.first_name || user?.username || 'Hiệp sĩ Rùa'}</h2>
               <p className="text-[10px] font-black text-[var(--cyan)] uppercase">@{user?.username || 'username'}</p>
             </div>
-            
+
             <div className="w-full pt-4 border-t-2 border-[var(--bg)] text-center">
-               <p className="text-[10px] font-black text-gray-400 uppercase">Ngày gia nhập</p>
-               <p className="font-bold text-xs">{user?.date_joined ? new Date(user.date_joined).toLocaleDateString('vi-VN') : 'Mới tham gia'}</p>
+              <p className="text-[10px] font-black text-gray-400 uppercase">Ngày gia nhập</p>
+              <p className="font-bold text-xs">{user?.date_joined ? new Date(user.date_joined).toLocaleDateString('vi-VN') : 'Mới tham gia'}</p>
             </div>
           </div>
         </div>
@@ -284,25 +284,25 @@ export default function ProfilePage() {
               <span className="text-xl">{activeTab === 'info' ? '−' : '+'}</span>
             </button>
             <div className={`p-6 space-y-4 ${activeTab === 'info' ? 'block' : 'hidden'} animate-in slide-in-from-top-2`}>
-               <div>
-                  <label className="block text-[10px] font-black uppercase mb-1 text-gray-400">Tên hiển thị</label>
-                  <input name="first_name" placeholder="Ví dụ: Rùa Con, Ben, Moon..." value={infoData.first_name} onChange={handleInfoChange} className="w-full p-3 border-2 border-[var(--border)] rounded-lg font-bold bg-[var(--bg)] outline-none focus:ring-4 focus:ring-[var(--yellow)]" />
-               </div>
-               <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-[10px] font-black uppercase mb-1 text-gray-400">Ngày sinh</label>
-                    <input type="date" name="birthday" value={infoData.birthday} onChange={handleInfoChange} className="w-full p-3 border-2 border-[var(--border)] rounded-lg font-bold bg-[var(--bg)] outline-none" />
-                  </div>
-                  <div>
-                    <label className="block text-[10px] font-black uppercase mb-1 text-gray-400">Số điện thoại</label>
-                    <input type="tel" name="phone_number" placeholder="09xx xxx xxx" value={infoData.phone_number} onChange={handleInfoChange} className="w-full p-3 border-2 border-[var(--border)] rounded-lg font-bold bg-[var(--bg)] outline-none" />
-                  </div>
-               </div>
-               <div>
-                  <label className="block text-[10px] font-black uppercase mb-1 text-gray-400">Email</label>
-                  <input type="email" name="email" placeholder="email@vidu.com" value={infoData.email} onChange={handleInfoChange} className="w-full p-3 border-2 border-[var(--border)] rounded-lg font-bold bg-[var(--bg)] outline-none" />
-               </div>
-               <button onClick={handleUpdateInfo} disabled={isLoading} className="w-full py-3 mt-4 neo-btn-primary bg-[var(--yellow)] font-black text-sm uppercase">Lưu thay đổi 💾</button>
+              <div>
+                <label className="block text-[10px] font-black uppercase mb-1 text-gray-400">Tên hiển thị</label>
+                <input name="first_name" placeholder="Ví dụ: Rùa Con, Ben, Moon..." value={infoData.first_name} onChange={handleInfoChange} className="w-full p-3 border-2 border-[var(--border)] rounded-lg font-bold bg-[var(--bg)] outline-none focus:ring-4 focus:ring-[var(--yellow)]" />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-[10px] font-black uppercase mb-1 text-gray-400">Ngày sinh</label>
+                  <input type="date" name="birthday" value={infoData.birthday} onChange={handleInfoChange} className="w-full p-3 border-2 border-[var(--border)] rounded-lg font-bold bg-[var(--bg)] outline-none" />
+                </div>
+                <div>
+                  <label className="block text-[10px] font-black uppercase mb-1 text-gray-400">Số điện thoại</label>
+                  <input type="tel" name="phone_number" placeholder="09xx xxx xxx" value={infoData.phone_number} onChange={handleInfoChange} className="w-full p-3 border-2 border-[var(--border)] rounded-lg font-bold bg-[var(--bg)] outline-none" />
+                </div>
+              </div>
+              <div>
+                <label className="block text-[10px] font-black uppercase mb-1 text-gray-400">Email</label>
+                <input type="email" name="email" placeholder="email@vidu.com" value={infoData.email} onChange={handleInfoChange} className="w-full p-3 border-2 border-[var(--border)] rounded-lg font-bold bg-[var(--bg)] outline-none" />
+              </div>
+              <button onClick={handleUpdateInfo} disabled={isLoading} className="w-full py-3 mt-4 neo-btn-primary bg-[var(--yellow)] font-black text-sm uppercase">Lưu thay đổi 💾</button>
             </div>
           </div>
 
@@ -313,26 +313,26 @@ export default function ProfilePage() {
               <span className="text-xl">{activeTab === 'security' ? '−' : '+'}</span>
             </button>
             <div className={`p-6 space-y-4 ${activeTab === 'security' ? 'block' : 'hidden'} animate-in slide-in-from-top-2`}>
-               <div>
-                  <label className="block text-[10px] font-black uppercase mb-1 text-gray-400">Tên đăng nhập</label>
-                  <input name="username" placeholder="Tên dùng để đăng nhập..." value={securityData.username} onChange={handleSecurityChange} className="w-full p-3 border-2 border-[var(--border)] rounded-lg font-bold bg-[var(--bg)] outline-none" />
-               </div>
-               <div className="pt-4 border-t-2 border-gray-100 space-y-4">
-                  <p className="text-[10px] font-black uppercase text-gray-400 italic">Thay đổi mật khẩu:</p>
-                  {[
-                    { name: 'old_password', placeholder: 'Mật khẩu hiện tại' },
-                    { name: 'new_password', placeholder: 'Mật khẩu mới (ít nhất 8 ký tự)' },
-                    { name: 'confirm_password', placeholder: 'Xác nhận mật khẩu mới' }
-                  ].map((field) => (
-                    <div key={field.name} className="relative">
-                      <input type={showPassword ? "text" : "password"} name={field.name} placeholder={field.placeholder} value={securityData[field.name]} onChange={handleSecurityChange} className="w-full p-3 border-2 border-[var(--border)] rounded-lg font-bold bg-[var(--bg)] outline-none pr-12" />
-                      <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-xl hover:scale-110 transition-transform">
-                        {showPassword ? '👁️' : '🙈'}
-                      </button>
-                    </div>
-                  ))}
-               </div>
-               <button onClick={handleUpdateSecurity} disabled={isLoading} className="w-full py-3 mt-4 neo-btn-primary bg-[var(--pink)] text-white font-black text-sm uppercase">Cập nhật bảo mật 🛡️</button>
+              <div>
+                <label className="block text-[10px] font-black uppercase mb-1 text-gray-400">Tên đăng nhập</label>
+                <input name="username" placeholder="Tên dùng để đăng nhập..." value={securityData.username} onChange={handleSecurityChange} className="w-full p-3 border-2 border-[var(--border)] rounded-lg font-bold bg-[var(--bg)] outline-none" />
+              </div>
+              <div className="pt-4 border-t-2 border-gray-100 space-y-4">
+                <p className="text-[10px] font-black uppercase text-gray-400 italic">Thay đổi mật khẩu:</p>
+                {[
+                  { name: 'old_password', placeholder: 'Mật khẩu hiện tại' },
+                  { name: 'new_password', placeholder: 'Mật khẩu mới (ít nhất 8 ký tự)' },
+                  { name: 'confirm_password', placeholder: 'Xác nhận mật khẩu mới' }
+                ].map((field) => (
+                  <div key={field.name} className="relative">
+                    <input type={showPassword ? "text" : "password"} name={field.name} placeholder={field.placeholder} value={securityData[field.name]} onChange={handleSecurityChange} className="w-full p-3 border-2 border-[var(--border)] rounded-lg font-bold bg-[var(--bg)] outline-none pr-12" />
+                    <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-xl hover:scale-110 transition-transform">
+                      {showPassword ? '👁️' : '🙈'}
+                    </button>
+                  </div>
+                ))}
+              </div>
+              <button onClick={handleUpdateSecurity} disabled={isLoading} className="w-full py-3 mt-4 neo-btn-primary bg-[var(--pink)] text-white font-black text-sm uppercase">Cập nhật bảo mật 🛡️</button>
             </div>
           </div>
         </div>
