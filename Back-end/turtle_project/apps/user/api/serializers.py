@@ -62,6 +62,18 @@ class UserProfileSerializer(serializers.ModelSerializer):
         fields = ('id', 'username', 'email', 'avatar', 'phone_number', 'birthday', 'date_joined', 'first_name', 'custom_commands')
         read_only_fields = ['id', 'date_joined'] 
 
+    def validate_email(self, value):
+        user = self.context['request'].user
+        if value and User.objects.exclude(pk=user.pk).filter(email=value).exists():
+            raise serializers.ValidationError("Email này đã được sử dụng bởi một tài khoản khác.")
+        return value
+
+    def validate_phone_number(self, value):
+        user = self.context['request'].user
+        if value and User.objects.exclude(pk=user.pk).filter(phone_number=value).exists():
+            raise serializers.ValidationError("Số điện thoại này đã được sử dụng bởi một tài khoản khác.")
+        return value
+
     def get_phone_number_display(self, obj):
         if obj.phone_number:
             # Trả về định dạng 091... cho trẻ dễ nhìn
