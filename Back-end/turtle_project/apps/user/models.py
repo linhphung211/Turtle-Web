@@ -11,6 +11,7 @@ class User(AbstractUser):
     telegram_id = models.CharField(max_length=50, unique=True, null=True, blank=True)
     avatar = models.ImageField(upload_to='avatars/', blank=True, null=True)
     birthday = models.DateField(blank=True, null=True)
+    custom_commands = models.JSONField(default=list, blank=True)
     
     is_email_verified = models.BooleanField(default=False)
     is_phone_verified = models.BooleanField(default=False)

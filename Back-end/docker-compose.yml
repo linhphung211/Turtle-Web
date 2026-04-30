@@ -23,9 +23,11 @@ services:
 
   # CELERY WORKER: Thằng này đi gửi OTP, gửi Mail (Làm việc ngay)
   celery_worker:
-    build: .
+    build:
+      context: .
+      dockerfile: ./docker/docker_env/dockerfile
     container_name: turtle_worker
-    command: celery -A core_root worker -l info
+    command: celery -A core worker -l info
     volumes:
       - .:/app
     depends_on:
@@ -33,9 +35,11 @@ services:
 
   # CELERY BEAT: Thằng này canh đồng hồ để xóa User 30 ngày (Lên lịch)
   celery_beat:
-    build: .
+    build:
+      context: .
+      dockerfile: ./docker/docker_env/dockerfile
     container_name: turtle_beat
-    command: celery -A core_root beat -l info
+    command: celery -A core beat -l info
     volumes:
       - .:/app
     depends_on:

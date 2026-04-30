@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'corsheaders',
     'user', 
     'lesson',
     'channels'
@@ -64,18 +65,19 @@ AUTHENTICATION_BACKENDS = [
 
 CELERY_BEAT_SCHEDULE = {
     'delete-inactive-users-every-midnight': {
-        'task': 'user.tasks.delete_inactive_users',
+        'task': 'user.tasks.cleanup_inactive_users', # Sửa tên function cho đúng với tasks.py
         'schedule': crontab(hour=0, minute=0), # Chạy lúc 00:00 mỗi đêm
     },
 
     # Task xóa Session hết hạn (THÊM MỚI)
     'cleanup-expired-sessions-daily': {
-        'task': 'apps.user.tasks.cleanup_expired_sessions',
+        'task': 'user.tasks.cleanup_expired_sessions', # Bỏ chữ apps.
         'schedule': crontab(hour=0, minute=30), # Chạy lúc 00:30 đêm (sau task xóa user 30p)
     },
 }
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -178,6 +180,10 @@ USE_I18N = True
 
 USE_TZ = True
 
+STATIC_URL = 'static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+
 
 # 1. Khai báo Backend (Dành cho Django 4.2+ nên dùng STORAGES)
 STORAGES = {
@@ -206,3 +212,31 @@ MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/'
 AWS_S3_FILE_OVERWRITE = False
 AWS_S3_QUERYSTRING_AUTH = False 
 AWS_DEFAULT_ACL = None
+
+# ===== CORS Configuration (cho Frontend React) =====
+CORS_ALLOWED_ORIGINS = [
+    'http://localhost:5173',    # Vite dev server
+    'http://127.0.0.1:5173',
+]
+
+CORS_ALLOW_HEADERS = [
+    'accept',
+    'authorization',
+    'content-type',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
+]
+
+CORS_ALLOW_METHODS = [
+    'DELETE',
+    'GET',
+    'OPTIONS',
+    'PATCH',
+    'POST',
+    'PUT',
+]
+
+# Cho phép FE gửi cookies/credentials (nếu cần)
+CORS_ALLOW_CREDENTIALS = True

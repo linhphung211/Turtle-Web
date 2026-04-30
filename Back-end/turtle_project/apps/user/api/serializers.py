@@ -22,11 +22,11 @@ from ..models import User
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, validators=[validate_password])
     
-    # Username: Bắt đầu bằng chữ, bắt đầu có ít nhất 1 số hoặc ký tự đặc biệt
+    # Username: Bắt đầu bằng chữ, dài ít nhất 3 ký tự
     username = serializers.CharField(validators=[
         RegexValidator(
-            regex=r'^[a-zA-Z](?=.*[0-9!@#$%^&*])',
-            message="Username bắt đầu bằng chữ, chứa ít nhất 1 số hoặc ký tự đặc biệt."
+            regex=r'^[a-zA-Z][a-zA-Z0-9_]{2,14}$',
+            message="Username bắt đầu bằng chữ, dài 3-15 ký tự (chỉ dùng chữ và số nhé)."
         )
     ])
 
@@ -52,10 +52,15 @@ class RegisterSerializer(serializers.ModelSerializer):
         return User.objects.create_user(**validated_data)
 
 class UserProfileSerializer(serializers.ModelSerializer):
+    first_name = serializers.CharField(required=False, allow_blank=True, allow_null=True)
+    email = serializers.EmailField(required=False, allow_blank=True, allow_null=True)
+    phone_number = PhoneNumberField(region='VN', required=False, allow_null=True)
+    birthday = serializers.DateField(required=False, allow_null=True)
+
     class Meta:
         model = User
-        fields = ('id', 'username', 'email', 'avatar', 'phone_number', 'birthday')
-        read_only_fields = ['id', 'username'] # Không cho sửa ID và Username
+        fields = ('id', 'username', 'email', 'avatar', 'phone_number', 'birthday', 'date_joined', 'first_name', 'custom_commands')
+        read_only_fields = ['id', 'date_joined'] 
 
     def get_phone_number_display(self, obj):
         if obj.phone_number:
