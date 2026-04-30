@@ -45,9 +45,9 @@ class UserViewSet(viewsets.GenericViewSet):
 
         if user is not None:
             if not user.is_active:
-            return Response({
-                "error": "Tài khoản của Hiệp sĩ đã bị đóng băng do lâu ngày không hoạt động. Hãy nhờ cha mẹ liên hệ Admin để rã đông nhé! ❄️🐢"
-            }, status=status.HTTP_403_FORBIDDEN)
+                return Response({
+                    "error": "Tài khoản của Hiệp sĩ đã bị đóng băng do lâu ngày không hoạt động. Hãy nhờ cha mẹ liên hệ Admin để rã đông nhé! ❄️🐢"
+                }, status=status.HTTP_403_FORBIDDEN)
 
         if user:
             update_last_login(None, user)  # Cập nhật last_login mỗi khi đăng nhập thành công
@@ -121,10 +121,11 @@ class UserViewSet(viewsets.GenericViewSet):
 
         session = UserSession.objects.filter(
             user=user, 
-            user_agent=user_agent
+            user_agent=user_agent,
+            expired_at__gt=timezone.now()
         ).first()
 
-        if not session or session.is_revoked:
+        if not session:
             return Response(
                 {"error": "Phiên làm việc đã bị vô hiệu hóa hoặc hết hạn"}, 
                 status=401
@@ -135,6 +136,7 @@ class UserViewSet(viewsets.GenericViewSet):
 
         # QUAN TRỌNG: Trả về dữ liệu cho Frontend
         return Response(UserProfileSerializer(user).data, status=status.HTTP_200_OK)
+
 
     @action(detail=False, methods=['patch'], permission_classes=[permissions.IsAuthenticated])
     def update_profile(self, request):
@@ -150,6 +152,32 @@ class UserViewSet(viewsets.GenericViewSet):
             }, status=status.HTTP_200_OK)
         
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    @action(detail=False, methods=['post'], permission_classes=[permissions.IsAuthenticated])
+    def change_password(self, request):
+        user = request.user
+        old_password = request.data.get('old_password')
+        new_password = request.data.get('new_password')
+        confirm_password = request.data.get('confirm_password')
+
+        if not old_password or not new_password:
+            return Response({"error": "Vui lòng nhập đầy đủ mật khẩu cũ và mới"}, status=400)
+
+        if not user.check_password(old_password):
+            return Response({"error": "Mật khẩu cũ không chính xác!"}, status=400)
+
+        if new_password != confirm_password:
+            return Response({"error": "Mật khẩu mới và xác nhận không khớp!"}, status=400)
+
+        try:
+            from django.contrib.auth.password_validation import validate_password
+            validate_password(new_password, user)
+        except Exception as e:
+            return Response({"error": str(e)}, status=400)
+
+        user.set_password(new_password)
+        user.save()
+        return Response({"message": "Đổi mật khẩu thành công! 🔐"}, status=200)
 
         # Kiểm tra: Nếu không có session HOẶC session đó đã bị revoked
         if not session or session.is_revoked:
