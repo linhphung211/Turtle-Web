@@ -1,21 +1,31 @@
 import { useAuth } from '../../hooks/useAuth';
 
-export default function CommandPalette({ commands, onCommandClick, onAddClick, onEditClick }) {
+export default function CommandPalette({ commands, onCommandClick, onAddClick, onEditClick, onResetClick }) {
   const { user } = useAuth();
 
   return (
     <div className="flex flex-col h-full bg-white">
       <div className="p-2 border-b-2 border-[var(--border)] bg-[var(--bg)] flex flex-col items-center gap-1">
-        <h3 className="font-black text-[8px] uppercase tracking-tighter text-gray-400">Lệnh</h3>
+        <h3 className="font-black text-xs uppercase tracking-tighter text-gray-400">Lệnh</h3>
         
-        {/* Chỉ hiện nút thêm nếu đã đăng nhập */}
+        {/* Chỉ hiện nút thêm/reset nếu đã đăng nhập */}
         {user && (
-          <button 
-            onClick={onAddClick} 
-            className="w-8 h-8 bg-white border-2 border-[var(--border)] rounded-full font-black text-lg flex items-center justify-center hover:bg-[var(--yellow)] transition-colors shadow-[2px_2px_0px_#000] active:translate-y-[1px] active:shadow-none"
-          >
-            +
-          </button>
+          <div className="flex gap-2">
+            <button 
+              onClick={onResetClick} 
+              title="Làm mới tập lệnh"
+              className="w-8 h-8 bg-white border-2 border-[var(--border)] rounded-full text-sm flex items-center justify-center hover:bg-[var(--blue)] transition-colors shadow-[2px_2px_0px_#000] active:translate-y-[1px] active:shadow-none"
+            >
+              🔄
+            </button>
+            <button 
+              onClick={onAddClick} 
+              title="Thêm lệnh mới"
+              className="w-8 h-8 bg-white border-2 border-[var(--border)] rounded-full font-black text-lg flex items-center justify-center hover:bg-[var(--yellow)] transition-colors shadow-[2px_2px_0px_#000] active:translate-y-[1px] active:shadow-none"
+            >
+              +
+            </button>
+          </div>
         )}
       </div>
       
@@ -31,22 +41,25 @@ export default function CommandPalette({ commands, onCommandClick, onAddClick, o
                     onEditClick(index); 
                   }
                 }}
-                style={{ backgroundColor: cmd.color }}
-                className="w-12 h-12 rounded-full border-[3px] border-[var(--border)] shadow-[3px_3px_0px_#1a1a1a] hover:translate-y-[-2px] hover:shadow-[4px_4px_0px_#1a1a1a] active:translate-y-[1px] active:shadow-none transition-all relative"
+                style={{ backgroundColor: cmd.color || '#ffffff' }}
+                className="w-12 h-12 rounded-full border-[3px] border-[var(--border)] shadow-[3px_3px_0px_#1a1a1a] hover:translate-y-[-2px] hover:shadow-[4px_4px_0px_#1a1a1a] active:translate-y-[1px] active:shadow-none transition-all relative flex items-center justify-center"
               >
+                {(!cmd.color || cmd.color === 'transparent' || cmd.color === '#ffffff') && cmd.icon && (
+                  <span className="text-2xl">{cmd.icon}</span>
+                )}
               </button>
 
               {/* Chỉ hiện nút sửa nếu đã đăng nhập */}
               {user && (
                 <button 
                   onClick={(e) => { e.stopPropagation(); onEditClick(index); }}
-                  className="absolute -top-1 -right-1 w-5 h-5 bg-white border-2 border-[var(--border)] rounded-full text-[8px] flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow-sm z-10"
+                  className="absolute -top-1 -right-1 w-5 h-5 bg-white border-2 border-[var(--border)] rounded-full text-[10px] flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow-sm z-10"
                 >
                   ✏️
                 </button>
               )}
             </div>
-            <span className="text-[8px] font-black text-center leading-tight uppercase truncate w-20 text-gray-500">
+            <span className="text-[11px] font-black text-center leading-tight uppercase truncate w-20 text-gray-500">
               {cmd.label}
             </span>
           </div>
