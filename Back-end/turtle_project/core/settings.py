@@ -30,7 +30,8 @@ load_dotenv(dotenv_path=env_path) # 2. Load file .env
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
-     
+GEMINI_API_KEY = os.getenv('GEMINI_API_KEY')
+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DJANGO_DEBUG') == 'True'
 
@@ -51,7 +52,8 @@ INSTALLED_APPS = [
     'corsheaders',
     'user', 
     'lesson',
-    'channels'
+    'channels',
+    'ai_assistant'
 ]
 
 ASGI_APPLICATION = 'core.asgi.application'
@@ -127,16 +129,22 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'your-email@gmail.com'
 EMAIL_HOST_PASSWORD = 'your-app-password'
 
+# Tự động nhận diện host chạy Redis (trong Docker container 'redis' hay chạy local 127.0.0.1)
+REDIS_HOST = 'redis' if os.path.exists('/.dockerenv') else '127.0.0.1'
+
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        # "LOCATION": "redis://redis:6379/1", # Tên service redis trong docker-compose
-        "LOCATION": "redis://127.0.0.1:6379/1", # Dùng localhost khi chạy local
+        "LOCATION": f"redis://{REDIS_HOST}:6379/1",
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
         }
     }
 }
+
+# Cấu hình Celery sử dụng Redis làm Broker (Tránh lỗi amqp://guest@127.0.0.1:5672)
+CELERY_BROKER_URL = f"redis://{REDIS_HOST}:6379/2"
+CELERY_RESULT_BACKEND = f"redis://{REDIS_HOST}:6379/2"
 
 DATABASES = {
     'default': {
